@@ -28,7 +28,7 @@ def prepare_input_dataframe(df: pd.DataFrame, expected_columns: list) -> pd.Data
     return df
 
 
-def run_data_prep(df: pd.DataFrame) -> pd.DataFrame:
+def run_data_prep(df: pd.DataFrame, data_dir: str) -> pd.DataFrame:
     df = select_only_relevant_candidates(df)
     df = clean_date_columns(df, ['cdate', 'belafspraak', 'geboortedatum'])
     df = clean_and_combine_source_columns(df)
@@ -43,7 +43,7 @@ def run_data_prep(df: pd.DataFrame) -> pd.DataFrame:
     df = clean_eigen_vervoer(df)
     df = clean_score_1(df)
     df = bereken_jaar_ervaring(df)
-    df = convert_postcode(df)
+    df = convert_postcode(df, data_dir)
     df = clean_werksituatie(df)
     df['Voorkeursbranche'] = df['Voorkeursbranche'].str.lower()
     df = clean_strevon_startsalaris_werktijden(df, "Strevon startsalaris")
@@ -129,7 +129,7 @@ def clean_werksituatie(df: pd.DataFrame) -> pd.DataFrame:
     df['Werksituatie'] = df['Werksituatie'].apply(lambda x: np.nan if x not in answers else x)
     return df
 
-def convert_postcode(df: pd.DataFrame) -> pd.DataFrame:
+def convert_postcode(df: pd.DataFrame, data_dir:str) -> pd.DataFrame:
     """
     Converts and enriches the 'postcode' column by adding city, province, and Randstad status,
     and then removes the original 'postcode' column.
@@ -147,7 +147,7 @@ def convert_postcode(df: pd.DataFrame) -> pd.DataFrame:
     """
     df['postcode_getal'] = df['postcode'].str[:4]
 
-    postal_code_data = pd.read_excel('model_training/data/postcodesNL.xlsx', converters={'Postcode': str})
+    postal_code_data = pd.read_excel(os.path.join(data_dir, 'postcodesNL.xlsx'), converters={'Postcode': str})
     df = df.merge(postal_code_data, left_on='postcode_getal', right_on='Postcode', how='left')
 
     randstad_list = ['Amsterdam', 'Rotterdam', 'Den Haag', 'Utrecht', 'Almere', 'Haarlem', 
