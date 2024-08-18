@@ -3,6 +3,8 @@ import numpy as np
 import random
 from datetime import datetime
 import re 
+import math
+import os
 
 
 def prepare_input_dataframe(df: pd.DataFrame, expected_columns: list) -> pd.DataFrame:
@@ -325,7 +327,6 @@ def clean_score_1(df: pd.DataFrame) -> pd.DataFrame:
     df[column] = df[column].apply(lambda x: x if x in answer_options else np.nan)
     return df
 
-import math
 
 def clean_eigen_vervoer(df: pd.DataFrame) -> pd.DataFrame:
     """
