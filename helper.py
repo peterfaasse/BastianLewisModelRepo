@@ -2,6 +2,15 @@ import os
 import re
 from datetime import datetime
 
+def make_dir(directory: str) -> None:
+  # Check if the directory exists
+  if not os.path.exists(directory):
+      # Create the directory
+      os.makedirs(directory)
+      print("Directory created successfully!")
+  else:
+      print("Directory already exists.")
+
 def get_most_recent_file(folder_path: str) -> str:
     """
     Finds the most recent file in a folder based on the date in the filename.
